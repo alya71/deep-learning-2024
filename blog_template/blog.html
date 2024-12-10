@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>main</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<section>
+<p><span>Outline</span></p>
+<ol>
+<li><p>Analyzed BERT attention matrices</p>
+<ol>
+<li><p>Alina can u talk about the various metrics lolol</p></li>
+</ol></li>
+<li><p>Discovered strong correlation between <span
+class="math inline"><em>W</em><sub><em>Q</em></sub></span> and <span
+class="math inline"><em>W</em><sub><em>K</em></sub></span> led us to try
+learning one shared matrix</p>
+<ol>
+<li><p>Talk about paper that learned one shared matrix between <span
+class="math inline"><em>W</em><sub><em>Q</em></sub></span>, <span
+class="math inline"><em>W</em><sub><em>K</em></sub></span>, and <span
+class="math inline"><em>W</em><sub><em>V</em></sub></span> for
+BERT</p></li>
+<li><p>Seen this for language, we want to try for vision: build ViT with
+these specs *will find in notebook later*</p></li>
+<li><p>Train and evaluate on MNIST, FashionMNIST, CIFAR10 to compare
+with standard 3 weight matrices</p></li>
+</ol></li>
+</ol>
+</section>
+<section>
+<p><span>Introduction</span></p>
+<ol>
+<li><p>Motivation: Honestly I’m not sure how we should talk about this
+bc we didn’t really start w this hypothesis we just kind of saw
+it</p></li>
+<li><p>Platonic representation paper led us to look into representations
+and simplicity? Or how do we wanna frame motivation for our questions
+I’m not really sure</p></li>
+<li><p>Outline for alina: talk about transformers, and how they’ve had
+lots of success but are not very well understood. So, we aimed to
+understand these better thru both langauge (maggie idk if you wanna talk
+about your stuff)?, looking at the relationships of the key, query, and
+value matrices across layers and heads. One way to do this is looking at
+the evolution through layers—due to PRH, we thought they’d get more
+similar (not true). However, we can also look at the relationship of the
+different types of weight matrices within layer / head.</p></li>
+</ol>
+<p>The Transformer model was introduced in 2017 <a href="#fn1"
+class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.
+Since then, it has achieved remarkable progress in a variety of tasks,
+including computer vision <a href="#fn2" class="footnote-ref"
+id="fnref2" role="doc-noteref"><sup>2</sup></a> and natural language
+processing <a href="#fn3" class="footnote-ref" id="fnref3"
+role="doc-noteref"><sup>3</sup></a>.</p>
+<p>Due to how large many transformer models are, it is not trivial to
+understand their behavior and determine how they could be modified. But,
+such work would be greatly beneficial to determine how to reduce the
+memory or computation needed for training, as well as increase
+interpretability.</p>
+<p>One avenue along which this has been pursued is by examining the
+representations that different models use. Huh et al. propose a
+platonic/ideal representation<a href="#fn4" class="footnote-ref"
+id="fnref4" role="doc-noteref"><sup>4</sup></a>—the notion that there’s
+a certain representation that is most effective at capturing data, and
+many models get close to this. Such a result led us to hypothesize that
+as the layer of a model increases, because it is approaching this ideal
+representation, there is less variation in the weights of the attention
+matrices. In other words, in the later layers we are more likely to be
+making smaller adjustments to the hidden state of a given embedding.</p>
+<p>Another reason we were motivated in believing that there can be
+similarity between later adjacent layers is because of the success of
+Recurrent Neural Networks<a href="#fn5" class="footnote-ref" id="fnref5"
+role="doc-noteref"><sup>5</sup></a>. Before the transformer architecture
+was introduced, tasks like translation (i.e. Google Translate) would use
+Long Short Term Memory. The recurrent inductive bias that RNNs have has
+been shown to be important on various natural language processing
+tasks<a href="#fn6" class="footnote-ref" id="fnref6"
+role="doc-noteref"><sup>6</sup></a>, and thus, we hypothesized that
+models might discover this after training.</p>
+<p>As we were examining how the query, key, and value matrices varied
+across layers of the model, we discovered that there is a strong,
+statistically significant correlation between the key weight and query
+weight matrices in the following four metrics: sparsity, rank,
+froebenius norm, and condition number. This led us to experiment on two
+novel methods of weight sharing between query and key. The first method
+is sharing the exact weight matrix between query and key, relating the
+two with a simple identity matrix. The second method is relating <span
+class="math inline"><em>W</em><sub><em>K</em></sub></span> by a hadamark
+product with <span
+class="math inline"><em>W</em><sub><em>Q</em></sub></span> and <span
+class="math inline"><em>W</em><sub><em>K</em></sub></span>, which
+preserves sparsity and ensures rank is non-increasing going from <span
+class="math inline"><em>W</em><sub><em>Q</em></sub></span> to <span
+class="math inline"><em>W</em><sub><em>K</em></sub></span>. In both
+these methods, less parameters are learned, which saves memory and
+compute time, without sacrificing performance.</p>
+<p><span style="color: red">if needed, we can add an overview of bert
+and baby bert, like number of parameters and shit but i doubt that’ll
+actually enhance comprehension lmao</span></p>
+</section>
+<section>
+<p><span>Similarity across layers</span></p>
+<p>In order to examine our hypothesis that later layers are more similar
+to one another, we examined the progression of various metrics of the
+query, key, and value matrices of each head across the layers.</p>
+<p>Our first metric was looking at the kernel alignment metric, which
+measures how similar two mappings are. Given two matrices <span
+class="math inline"><em>P</em>, <em>Q</em></span>, the kernel alignment
+metric is given by</p>
+<p>Our inference was preformed on the large, uncased BERT model. For a
+layer index <span class="math inline"><em>i</em></span> ranging from 0
+to 22 (inclusive), we computed the kernel alignment metric between the
+<span class="math inline">{query, key, value}</span> weight matrix in
+head <span class="math inline"><em>j</em></span> in layer <span
+class="math inline"><em>i</em></span>, and the corresponding matrix in
+head <span class="math inline"><em>j</em></span> in layer <span
+class="math inline"><em>i</em> + 1</span>. Our results are displayed in
+the figures below <span style="color: red">(steal from “Similarity
+across layers within the same head") part of the paper</span></p>
+<p>As shown in the figures, the magnitude of the kernel alignment score
+remains relatively low for the query, key, and value matrices as we
+increase the layer. This does not support our hypothesis that later
+layers are more similar. <span style="color: red">idk if we want to do
+analysis here?</span> Upon further reflection, such a result seems
+sensible—effectively, if two layers were relatively similar, applying
+them sequentially would not be all that different from just applying a
+scaled version of one of them. Therefore, if many of the layers were
+similar, such a network could be less adept at learning complex
+representations, so it makes sense for networks to fully utilize their
+parameters by having more distinct layers.</p>
+<p>In addition to examining the kernel alignment metric, we also looked
+at sparsity, rank, the Frobenius norm, and the condition number.
+However, the most interesting trends observed with these metrics have to
+deal with the relationship between query and key matrices rather than
+their evolution through the layers, so the graphs are attached in the
+next section.</p>
+</section>
+<section>
+<p><span>Our four Metrics</span></p>
+<ol>
+<li><p>Embeddings: Different clusterings, why? Look at
+attention</p></li>
+<li><p>Attention analysis: Various metrics measuring simplicity and
+correlation</p></li>
+</ol>
+<p>Motivated by our observations when studying similarity across layers,
+we investigated the relationship between query and key matrices in the
+same head.</p>
+<div class="subsection">
+<p><span>Sparsity</span></p>
+<p>One property of matrices is sparsity. In the purest sense, the
+sparseness of a matrix is measured by the number of entries it has that
+are equal to zero. Because our neural network weights are tuned with an
+optimizer, none of the weights are exactly equal to zero. So, to capture
+this notion of weights that are insignificant and which could be
+eliminated, we counted the number of weights in each matrix who’s
+magnitude was less than <span
+class="math inline">10<sup>−4</sup></span>. <span style="color: red">idk
+if this is needed but—</span>this threshold was chosen somewhat
+arbitrarily, but the phenomena we observe occurs for other reasonable
+choices as well.</p>
+<p><span style="color: red">include graphics—maybe both bert and baby
+bert</span></p>
+<p>Just visually, it appears that there is a relationship between the
+number of near zero entries of the query and key weights, but not with
+the value weights (<span style="color: red">base bert: least sparse
+matrices are layer 2, head 0 / 9 for both key and query. big bert: idk
+rn lol</span>). To verify this, we computed the correlation matrix
+between these values. The correlation between the number of near zero
+entries of the value matrix and either of the query or key was
+insignificant, but for both sizes of BERT, the correlation coefficient
+between the number of near zero entries of the query and key matrix was
+above <span class="math inline">0.9</span>.</p>
+</div>
+<div class="subsection">
+<p><span>Effective Rank</span> Another property of matrices is their
+rank, or the dimension of the span of its column vectors. Again, because
+of our optimization process, all of our matrices will almost certainly
+be full rank. We get around this by computing “effective rank"<a
+href="#fn7" class="footnote-ref" id="fnref7"
+role="doc-noteref"><sup>7</sup></a>. For any matrix <span
+class="math inline"><em>B</em></span>, we compute its singular value
+decomposition, <span
+class="math inline"><em>A</em> = <em>U</em><em>Λ</em><em>V</em>.</span>
+Then, entries along the diagonal of diagonal matrix <span
+class="math inline"><em>Λ</em></span> are our singular values, <span
+class="math inline"><em>σ</em><sub>1</sub> ≥ <em>σ</em><sub>2</sub> ≥ ⋯ ≥ <em>σ</em><sub><em>k</em></sub>.</span>
+If we let <span
+class="math inline"><em>σ</em> = (<em>σ</em><sub>1</sub>, …, <em>σ</em><sub><em>k</em></sub>)</span>,
+then the effective rank is equal to <span style="color: red">can delete
+or put in background lmao</span></p>
+<p>This is similar to the measure of cross-entropy! Essentially, we are
+measuring the entropy of the singular values. If a few singular values
+are dominant, then the matrix is more low-rank, as the transformation is
+less rich.</p>
+<p>When computing effective rank across layers, heads, and types of
+weight matrix, we again saw a correlation between only the effective
+ranks of corresponding key and query matrices. <span
+style="color: red">add figures as well</span> This is again summarized
+in our correlation matrices.</p>
+</div>
+<div class="subsection">
+<p><span>Frobenius Norm</span></p>
+</div>
+</section>
+<section>
+<p><span>Experiments on ViT</span></p>
+<ol>
+<li><p>Key discovery from our analysis of BERT: similar <span
+class="math inline"><em>W</em><sub><em>K</em></sub></span> and <span
+class="math inline"><em>W</em><sub><em>Q</em></sub></span>.</p></li>
+<li><p>Lit Review: that paper turning 3 matrices into learning only 1
+for BERT. We did for vision.</p></li>
+<li><p>Results from 3 experiments</p></li>
+</ol>
+<p>In our analysis of BERT, we discovered strong, statistically
+significant correlation between <span
+class="math inline"><em>W</em><sub><em>Q</em></sub></span> and <span
+class="math inline"><em>W</em><sub><em>K</em></sub></span> among four
+metrics. This led us to believe that we could relate <span
+class="math inline"><em>W</em><sub><em>Q</em></sub></span> and <span
+class="math inline"><em>W</em><sub><em>K</em></sub></span> with some
+simple matrix multiplication. We decided to experiment with the identity
+matrix and a hadamard product.</p>
+<p>We construct a ViT with the following architecture —— and train it
+with the following hyperparameters ——. We then train and evaluate on
+CIFAR10, MNIST, and FashionMNIST. Comparing the performance of standard
+weights versus identity-shared weights, we find that identity-shared
+weights perform slightly better. Comparing the performance of standard
+weights versus hadamard-shared weights, we find that hadamard-shared
+weights also perform slightly better. *Figures*</p>
+<p>One thing we notice is that these models tend to overfit, both for
+the original and adjusted weights. We see the difference in training and
+validation accuracy most clearly in CIFAR10. The model also overfits for
+both MNIST datasets, except it is not immediately visible because both
+accuracies are so high.</p>
+</section>
+<section>
+<p><span>Literature Review</span></p>
+<p>To the best of our knowledge, there has not been a modified model
+that solely examines the effects of having the query and key matrices
+utilize the same weights, or restricting <span
+class="math inline"><em>W</em><sub><em>K</em></sub></span> to a Hadamard
+product between <span
+class="math inline"><em>W</em><sub><em>Q</em></sub></span> and some
+learnable <span class="math inline"><em>H</em></span>.</p>
+<p>Arguably the most similar result work we could find is Kowsher et
+al., which trains BERT on an alternative model that uses a singular
+shared weight matrix instead of separate query, key, and value weights,
+so <span
+class="math inline"><em>W</em><sub><em>Q</em></sub> = <em>W</em><sub><em>K</em></sub> = <em>W</em><sub><em>V</em></sub></span>.
+However, such a simplification is more extreme than ours. It’s not
+supported by our experimental observations, which show only a strong
+correlation between the query and key matrices, but not between the
+value matrix and either of the other two. Thus, although this simplifies
+the model, their savings may come at a disproportionately larger
+reduction of accuracy than ours would, because we are able to exploit
+the relationship between the query and key matrices.</p>
+<p>In addition to this, there are other architectures involving weight
+sharing between query, key, and value matrices.</p>
+<p>Ahn et al. proposes and evaluates three levels of weight sharing
+between Q, K, and V. The F-SNE (Fully shared nonlinear embedding) method
+is most similar to our proposed weight sharing between Q and K. F-SNE
+learns one shared projection matrix <span
+class="math inline"><em>W</em><sub><em>S</em></sub></span> of input X
+onto <span class="math inline"><em>Q</em></span>, <span
+class="math inline"><em>K</em></span>, and <span
+class="math inline"><em>V</em></span> space that guides the embeddding
+of a token X into the same manifold. However, this makes it impossible
+to embed different vectors simultaneously, so to extend this, they
+concatenate trainable vectors <span
+class="math inline"><em>C</em><sub><em>q</em></sub></span>, <span
+class="math inline"><em>C</em><sub><em>k</em></sub></span>, <span
+class="math inline"><em>C</em><sub><em>v</em></sub></span> to the input
+before applying the shared projection <span
+class="math inline"><em>W</em><sub><em>S</em></sub></span>. Evaluation
+on ImageNet classification, transfer learning to other datasets, and
+distillation showed that F-SNE and other partial weight sharing performs
+very similarly to the standard, in fact improving in certain
+examples.</p>
+<p>Lastly, in addition to parameter sharing across different types of
+weight matrices, there are also models that use the same weights across
+different layers. In the Universal Transformer, Dehghani et al.
+introduced the earliest example of this, where the weights are the same
+across different layers in their recurrent encoder block and recurrent
+decoder block <a
+href="https://ojs.aaai.org/index.php/AAAI/article/view/4590"
+class="uri">https://ojs.aaai.org/index.php/AAAI/article/view/4590</a>.
+Dabre et al. were able to improve on this by also keeping the same
+weights and achieving a space reduction <a
+href="https://arxiv.org/abs/1807.03819"
+class="uri">https://arxiv.org/abs/1807.03819</a>, and Lan et al.
+considered the effects of sharing only attention weights and only
+weights of the feedforward network. Less restrictive sharing
+architectures were also proposed, such as one that has cyclical
+sharing—layers <span class="math inline">{1, 4}, {2, 5},</span> and
+<span class="math inline">{3, 6}</span> share parameters, tripling the
+number of parameters.</p>
+</section>
+<section>
+
+</section>
+<section>
+<p><span>Conclusion</span></p>
+<p>Future directions: instead of making them the exact same, do query =
+key * baby matrix? ok lol i tried this. but we could do this with non
+bert stuff</p>
+<p>train a baby neural network to guess key given query LMAOOO</p>
+<p>ok i could be talking outta my ass here, but i think our ViT is kinda
+overkill for MNIST. like it has hellaaa parameters, and we prob don’t
+need that much freedom and it enables overfitting. see the shit about
+how in knowledge distillation, the student does sometimes better than
+the teacher despite being smaller, and how dropout (where they randomly
+kill some of the entries, i think there’s dropout both during training
+and before training like inherent to the structure, would want to make
+sure its the latter one here).</p>
+<p>i think this overfitting is real!! if we look at graphs, training
+accuracy is higher for normal, but validation is higher for modified
+-&gt; overfitting</p>
+<p>We propose two weight sharing strategies: identity matrix and
+hadamard product. Based on our experiments, we observed that sharing
+weights does not sacrifice performance. These strategies could be
+helpful because we save 1/3 of the memory, since we learn two matrices
+instead of three. Additionally, the train time is faster <span
+style="color: red">if we have time we can rerun them and note down the
+train times and compare</span> In future work, a possible area to
+explore is more robust relations between <span
+class="math inline"><em>W</em><sub><em>K</em></sub></span> and <span
+class="math inline"><em>W</em><sub><em>Q</em></sub></span> instead of
+the identity matrix or hadamard product. We could train a neural network
+to guess <span
+class="math inline"><em>W</em><sub><em>K</em></sub></span> given <span
+class="math inline"><em>W</em><sub><em>Q</em></sub></span> by learning
+some matrix <span
+class="math inline"><em>W</em><sub><em>S</em></sub> = <em>W</em><sub><em>K</em></sub><em>W</em><sub><em>Q</em></sub><sup><em>T</em></sup></span>.
+Additionally, Our ViT exhibits overfitting perhaps because of the excess
+of parameters for a relatively simple task.</p>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document"
+role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://arxiv.org/abs/1706.03762"
+class="uri">https://arxiv.org/abs/1706.03762</a><a href="#fnref1"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p><a href="https://arxiv.org/pdf/2005.12872"
+class="uri">https://arxiv.org/pdf/2005.12872</a><a href="#fnref2"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p><a href="https://arxiv.org/pdf/1906.08237"
+class="uri">https://arxiv.org/pdf/1906.08237</a><a href="#fnref3"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p><a href="https://arxiv.org/pdf/2405.07987"
+class="uri">https://arxiv.org/pdf/2405.07987</a><a href="#fnref4"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p><a
+href="https://sophieeunajang.wordpress.com/wp-content/uploads/2020/10/lstm.pdf"
+class="uri">https://sophieeunajang.wordpress.com/wp-content/uploads/2020/10/lstm.pdf</a><a
+href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p><a href="https://arxiv.org/pdf/1807.03819"
+class="uri">https://arxiv.org/pdf/1807.03819</a><a href="#fnref6"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn7"><p><a
+href="https://ieeexplore.ieee.org/abstract/document/7098875"
+class="uri">https://ieeexplore.ieee.org/abstract/document/7098875</a><a
+href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+</body>
+</html>
