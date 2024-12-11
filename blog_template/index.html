@@ -512,6 +512,18 @@ Our last metric was the condition number (see <a href="#maths">mathematical back
 	We construct a ViT with 6 layers, with each layer being a 3-head attention followed by a simple feed forward network, an MLP. The parameters we used for training are 18 or 10 epochs, Adam optimizer, learning rate of 0.001, and cross entropy loss. We then train and evaluate on CIFAR10, MNIST, and FashionMNIST. Comparing the performance of standard weights versus identity-shared weights, we find that identity-shared weights perform extremely similarly. 
 	Comparing the performance of standard weights versus Hadamard-shared weights, we find that Hadamard-shared weights also perform slightly better. 
 	<br>
+	<figure>
+	    <img src="images/mnist.png" alt="Sparsity" style="display: block; margin-left: auto; margin-right: auto; max-width: 100%; height: auto;">
+	    <figcaption style="text-align: center;">Figure 9: Learning Curve for MNIST Dataset</figcaption>
+	</figure>
+	<figure>
+	    <img src="images/fashion-mnist.png" alt="Sparsity" style="display: block; margin-left: auto; margin-right: auto; max-width: 100%; height: auto;">
+	    <figcaption style="text-align: center;">Figure 10: Learning Curve for Fashion MNIST Dataset</figcaption>
+	</figure>
+	<figure>
+	    <img src="images/cifar.png" alt="Sparsity" style="display: block; margin-left: auto; margin-right: auto; max-width: 100%; height: auto;">
+	    <figcaption style="text-align: center;">Figure 11: Learning Curve for CIFAR10</figcaption>
+	</figure>
 	<br>
 	<figure>
         <p style="text-align: center;">
@@ -547,9 +559,8 @@ Our last metric was the condition number (see <a href="#maths">mathematical back
 
 	<h1>Experiments on Finetuning BERT</h1>
 
-	We finetune BERT for sentiment analysis with the IMDb dataset once with standard weights and once with our identity-shared weights to compare their accuracies. Prior analysis of an open source BERT model finetuned for sentiment analysis revealed that attention heads only changed in the last 3 of 12 layers. Thus, for our model with identity-shared weights, we only enforce this \(W_Q = W_K\) for the last 3 layers. We use BERT-base-uncased as our pretrained model and use the following hyperparameters as suggested in the original BERT paper: learning rate \(5e^{-5}\) with Adam optimizer, batch size 16, and 3 epochs. Our identity-shared weights performed slightly worse on validation data compared to the standard weights with these settings, but with some hyperparameter tuning, we believe could result in similar or better accuracy.
-
-	<br><br>
+	We finetune BERT for sentiment analysis with the IMDb dataset once with standard weights and once with our identity-shared weights to compare their accuracies. Prior analysis of an open source BERT model finetuned for sentiment analysis revealed that attention heads only changed in the last 3 of 12 layers. Thus, for our model with identity-shared weights, we only enforce this \(W_Q = W_K\) for the last 3 layers. We use BERT-base-uncased as our pretrained model and use the following hyperparameters as suggested in the original BERT paper: learning rate \(5e^{-5}\) with Adam optimizer, batch size 16, and 3 epochs. Our identity-shared weights performed slightly worse on validation data compared to the standard weights with these settings, but with some hyperparameter tuning, we believe could result in similar or better accuracy. 
+	<br>
 	<figure>
         <p style="text-align: center;">
             $$
