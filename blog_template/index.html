@@ -344,10 +344,6 @@ One property of matrices is sparsity. In the purest sense, the sparseness of a m
 <br>
 Just visually, it appears that there is a relationship between the number of near zero entries of the query and key weights, but not with the value weights. For example, in base BERT, the least sparse matrices are layer 2, head 0  and 9 for both the key and query matrices. To verify this, we computed the correlation matrix between these values. The correlation between the number of near zero entries of the value matrix and either of the query or key was insignificant, but for both sizes of BERT, the correlation coefficient between the number of near zero entries of the query and key matrix was above 0.9.
 <figure>
-    <img src="images/sparsity.png" alt="Sparsity" style="max-width: 100%; height: auto;">
-    <figcaption>Figure 1: Comparison of sparsity in weight matrices</figcaption>
-</figure>
-<figure>
     <img src="images/sparsity.png" alt="Sparsity" style="display: block; margin-left: auto; margin-right: auto; max-width: 100%; height: auto;">
     <figcaption style="text-align: center;">Figure 1: Comparison of sparsity in weight matrices for BERT-base-uncased</figcaption>
 </figure>
@@ -426,7 +422,7 @@ The Frobenius norm is quite similar to the Euclidean norm for vectors—for a ma
 Again, we were able to find a correlation between the norms of the query and key matrices, but not involving the value matrix:
 
 <figure>
-    <img src="images/frobenius.png" alt="Sparsity" style="display: block; margin-left: auto; margin-right: auto; max-width: 100%; height: auto;">
+    <img src="images/froebenius.png" alt="Sparsity" style="display: block; margin-left: auto; margin-right: auto; max-width: 100%; height: auto;">
     <figcaption style="text-align: center;">Figure 5: Comparison of Frobenius norm in weight matrices for BERT-base-uncased</figcaption>
 </figure>
 <figure>
@@ -464,11 +460,11 @@ Again, we were able to find a correlation between the norms of the query and key
 Our last metric was the condition number (see <a href="#maths">mathematical background section</a>). Again, we observe the same relationship between the query, key, and weight matrices, although the correlation for the condition number is weaker than the correlations of the other three metrics. 
 <figure>
     <img src="images/condition.png" alt="Sparsity" style="display: block; margin-left: auto; margin-right: auto; max-width: 100%; height: auto;">
-    <figcaption style="text-align: center;">Figure 1: Comparison of condition number in weight matrices for BERT-base-uncased</figcaption>
+    <figcaption style="text-align: center;">Figure 7: Comparison of condition number in weight matrices for BERT-base-uncased</figcaption>
 </figure>
 <figure>
     <img src="images/condition-large.png" alt="Sparsity" style="display: block; margin-left: auto; margin-right: auto; max-width: 100%; height: auto;">
-    <figcaption style="text-align: center;">Figure 2: Comparison of condition number in weight matrices for BERT-large-uncased</figcaption>
+    <figcaption style="text-align: center;">Figure 8: Comparison of condition number in weight matrices for BERT-large-uncased</figcaption>
 </figure>
 <figure>
         <p style="text-align: center;">
