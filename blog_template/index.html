@@ -285,7 +285,7 @@ froebenius norm, and condition number. This led us to experiment on two
 novel methods of weight sharing between query and key. The first method
 is sharing the exact weight matrix between query and key, relating the
 two with a simple identity matrix. The second method is relating \(W_K\) by a Hadamard
-product with \(W_Q) and \(W_K\), which
+product with \(W_Q\) and \(W_K\), which
 preserves sparsity and ensures rank is non-increasing going from \(W_Q\) to \(W_K\). In both
 these methods, less parameters are learned, which saves memory and
 compute time, without sacrificing performance.</p>
@@ -305,7 +305,7 @@ compute time, without sacrificing performance.</p>
 
 Our first metric was looking at the kernel alignment metric, which measures how similar two mappings are. Given two matrices $P, Q$, the kernel alignment metric is given by
 \[ \frac{\text{Tr}(P Q)}{\sqrt{\text{Tr}(P^2) \cdot \text{Tr}(Q^2)}}. \]
-Our inference was preformed on the large, uncased BERT model. For a layer index $i$ ranging from 0 to 22 (inclusive), we computed the kernel alignment metric between the $\{\text{query}, \text{key}, \text{value}\}$ weight matrix in head $j$ in layer $i$, and the corresponding matrix in head $j$ in layer $i+1$. Our results are displayed in the figures below \textcolor{red}{(steal from ``Similarity across layers within the same head") part of the paper}
+Our inference was preformed on the large, uncased BERT model. For a layer index \(i\) ranging from 0 to 22 (inclusive), we computed the kernel alignment metric between the \(\{\text{query}, \text{key}, \text{value}\}\) weight matrix in head \(j\) in layer \(i\), and the corresponding matrix in head $j$ in layer $i+1$. Our results are displayed in the figures below \textcolor{red}{(steal from ``Similarity across layers within the same head") part of the paper}
 
 As shown in the figures, the magnitude of the kernel alignment score remains relatively low for the query, key, and value matrices as we increase the layer. This does not support our hypothesis that later layers are more similar. \textcolor{red}{idk if we want to do analysis here?} Upon further reflection, such a result seems sensible—effectively, if two layers were relatively similar, applying them sequentially would not be all that different from just applying a scaled version of one of them. Therefore, if many of the layers were similar, such a network could be less adept at learning complex representations, so it makes sense for networks to fully utilize their parameters by having more distinct layers.
 
