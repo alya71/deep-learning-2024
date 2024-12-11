@@ -342,12 +342,11 @@ In addition to examining the kernel alignment metric, we also looked at sparsity
 
 One property of matrices is sparsity. In the purest sense, the sparseness of a matrix is measured by the number of entries it has that are equal to zero. Because our neural network weights are tuned with an optimizer, none of the weights are exactly equal to zero. So, to capture this notion of weights that are insignificant and which could be eliminated, we counted the number of weights in each matrix who's magnitude was less than \(10^{-4}\). This threshold was chosen somewhat arbitrarily, but the phenomena we observe occurs for other reasonable choices as well. 
 <br>
-<br>
-\textcolor{red}{include graphics—maybe both bert and baby bert}
-<br>
-<br>
 Just visually, it appears that there is a relationship between the number of near zero entries of the query and key weights, but not with the value weights. For example, in base BERT, the least sparse matrices are layer 2, head 0  and 9 for both the key and query matrices. To verify this, we computed the correlation matrix between these values. The correlation between the number of near zero entries of the value matrix and either of the query or key was insignificant, but for both sizes of BERT, the correlation coefficient between the number of near zero entries of the query and key matrix was above 0.9.
-
+<figure>
+    <img src="images/sparsity.png" alt="Sparsity" style="max-width: 100%; height: auto;">
+    <figcaption>Figure 1: Comparison of sparsity in weight matrices</figcaption>
+</figure>
 <figure>
         <p style="text-align: center;">
             $$
