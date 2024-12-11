@@ -309,7 +309,7 @@ compute time, without sacrificing performance.</p>
 					<h1>Similarity across layers</h1>
 				  In order to examine our hypothesis that later layers are more similar to one another, we examined the progression of various metrics of the query, key, and value matrices of each head across the layers. 
 
-Our first metric was looking at the kernel alignment metric, which measures how similar two mappings are. Given two matrices $P, Q$, the kernel alignment metric is given by
+Our first metric was looking at the kernel alignment metric, which measures how similar two mappings are. Given two matrices \(P, Q\), the kernel alignment metric is given by
 \[ \frac{\text{Tr}(P Q)}{\sqrt{\text{Tr}(P^2) \cdot \text{Tr}(Q^2)}}. \]
 Our inference was preformed on the large, uncased BERT model. For a layer index \(i\) ranging from 0 to 22 (inclusive), we computed the kernel alignment metric between the \(\{\text{query}, \text{key}, \text{value}\}\) weight matrix in head \(j\) in layer \(i\), and the corresponding matrix in head \(j\) in layer \(i+1\). Our results are displayed in the figures below \textcolor{red}{(steal from ``Similarity across layers within the same head") part of the paper}
 
@@ -497,6 +497,29 @@ Again, we observe the same relationship between the query, key, and weight matri
 	<br>
 
 	However, in order to give the model more parameters to work with, we also set \(W_K = W_H \odot W_Q,\) where \(W_H\) is a matrix with the same dimensions as \(W_Q\) and learnable parameters. 
+
+	<br>
+	<br>
+
+	The choice of taking a Hadamard product was that it preserves sparsity and rank, to a degree. If \(W_Q\) has a zero (or very small) entry, then \(W_H \odot W_Q\) likely also has a very small entry at that position. Similarly, the rank of \(W_H \odot W_Q\) is bounded by \(\min \{\text{rank} (W_H), \text{rank} (W_Q)\},\) so in the likely case that \(W_H\) is full rank, we are able to preserve the rank of \(W_Q.\)
+
+	<br>
+	<br>
+
+	We construct a ViT with 6 layers, with each layer being a 3-head attention followed by a simple feed forward network, an MLP. The parameters we used for training are 18 or 10 epochs, Adam optimizer, learning rate of 0.001, and cross entropy loss. We then train and evaluate on CIFAR10, MNIST, and FashionMNIST. Comparing the performance of standard weights versus identity-shared weights, we find that identity-shared weights perform extremely similarly. 
+	<br>
+	<br>
+	insert table
+	<br>
+	<br>
+	Comparing the performance of standard weights versus Hadamard-shared weights, we find that Hadamard-shared weights also perform slightly better. 
+	<br>
+	<br>
+	*Figures*
+	<br>
+	<br>
+	One thing we notice is that these models tend to overfit, both for the original and adjusted weights. We see the difference in training and validation accuracy most clearly in CIFAR10. The model also overfits for both MNIST datasets, except it is not immediately visible because both accuracies are so high.
+
 
 		</div>
 		    <div class="margin-right-block">
