@@ -298,7 +298,11 @@ compute time, without sacrificing performance.</p>
 <br><br>
 Our first metric was looking at the kernel alignment metric, which measures how similar two mappings are. Given two matrices \(P, Q\), the kernel alignment metric is given by
 \[ \frac{\text{Tr}(P Q)}{\sqrt{\text{Tr}(P^2) \cdot \text{Tr}(Q^2)}}. \]
-Our inference was preformed on the large, uncased BERT model. For a layer index \(i\) ranging from 0 to 22 (inclusive), we computed the kernel alignment metric between the \(\{\text{query}, \text{key}, \text{value}\}\) weight matrix in head \(j\) in layer \(i\), and the corresponding matrix in head \(j\) in layer \(i+1\). Our results are displayed in the figures below \textcolor{red}{(steal from ``Similarity across layers within the same head") part of the paper}
+Our inference was preformed on the large, uncased BERT model. For a layer index \(i\) ranging from 0 to 22 (inclusive), we computed the kernel alignment metric between the \(\{\text{query}, \text{key}, \text{value}\}\) weight matrix in head \(j\) in layer \(i\), and the corresponding matrix in head \(j\) in layer \(i+1\). Our results are displayed in the figure below.
+<figure>
+    <img src="images/similarity-large.png" alt="Sparsity" style="display: block; margin-left: auto; margin-right: auto; max-width: 100%; height: auto;">
+    <figcaption style="text-align: center;">Figure 1: Similarity of weights from layer \(i\) to \(i+1\)</figcaption>
+</figure>
 <br><br>
 As shown in the figures, the magnitude of the kernel alignment score remains relatively low for the query, key, and value matrices as we increase the layer. This does not support our hypothesis that later layers are more similar. Upon further reflection, such a result seems sensible—effectively, if two layers were relatively similar, applying them sequentially would not be all that different from just applying a scaled version of one of them. Therefore, if many of the layers were similar, such a network could be less adept at learning complex representations, so it makes sense for networks to fully utilize their parameters by having more distinct layers.
 <br><br>
@@ -314,11 +318,11 @@ One property of matrices is sparsity. In the purest sense, the sparseness of a m
 Just visually, it appears that there is a relationship between the number of near zero entries of the query and key weights, but not with the value weights. For example, in base BERT, the least sparse matrices are layer 2, head 0  and 9 for both the key and query matrices. To verify this, we computed the correlation matrix between these values. The correlation between the number of near zero entries of the value matrix and either of the query or key was insignificant, but for both sizes of BERT, the correlation coefficient between the number of near zero entries of the query and key matrix was above 0.9.
 <figure>
     <img src="images/sparsity.png" alt="Sparsity" style="display: block; margin-left: auto; margin-right: auto; max-width: 100%; height: auto;">
-    <figcaption style="text-align: center;">Figure 1: Comparison of sparsity in weight matrices for BERT-base-uncased</figcaption>
+    <figcaption style="text-align: center;">Figure 2: Comparison of sparsity in weight matrices for BERT-base-uncased</figcaption>
 </figure>
 <figure>
     <img src="images/sparsity-large.png" alt="Sparsity" style="display: block; margin-left: auto; margin-right: auto; max-width: 100%; height: auto;">
-    <figcaption style="text-align: center;">Figure 2: Comparison of sparsity in weight matrices for BERT-large-uncased</figcaption>
+    <figcaption style="text-align: center;">Figure 3: Comparison of sparsity in weight matrices for BERT-large-uncased</figcaption>
 </figure>
 <figure>
         <p style="text-align: center;">
@@ -351,11 +355,11 @@ Another property of matrices is their rank, or the dimension of the span of its 
 When computing effective rank across layers, heads, and types of weight matrix, we again saw a correlation between only the effective ranks of corresponding key and query matrices. This information is again summarized in our correlation matrices:
 <figure>
     <img src="images/rank.png" alt="Sparsity" style="display: block; margin-left: auto; margin-right: auto; max-width: 100%; height: auto;">
-    <figcaption style="text-align: center;">Figure 3: Comparison of effective rank in weight matrices for BERT-base-uncased</figcaption>
+    <figcaption style="text-align: center;">Figure 4: Comparison of effective rank in weight matrices for BERT-base-uncased</figcaption>
 </figure>
 <figure>
     <img src="images/rank-large.png" alt="Sparsity" style="display: block; margin-left: auto; margin-right: auto; max-width: 100%; height: auto;">
-    <figcaption style="text-align: center;">Figure 4: Comparison of effective rank in weight matrices for BERT-large-uncased</figcaption>
+    <figcaption style="text-align: center;">Figure 5: Comparison of effective rank in weight matrices for BERT-large-uncased</figcaption>
 </figure>
 
 <figure>
@@ -392,11 +396,11 @@ Again, we were able to find a correlation between the norms of the query and key
 
 <figure>
     <img src="images/froebenius.png" alt="Sparsity" style="display: block; margin-left: auto; margin-right: auto; max-width: 100%; height: auto;">
-    <figcaption style="text-align: center;">Figure 5: Comparison of Frobenius norm in weight matrices for BERT-base-uncased</figcaption>
+    <figcaption style="text-align: center;">Figure 6: Comparison of Frobenius norm in weight matrices for BERT-base-uncased</figcaption>
 </figure>
 <figure>
     <img src="images/frobenius-large.png" alt="Sparsity" style="display: block; margin-left: auto; margin-right: auto; max-width: 100%; height: auto;">
-    <figcaption style="text-align: center;">Figure 6: Comparison of Frobenius norm in weight matrices for BERT-large-uncased</figcaption>
+    <figcaption style="text-align: center;">Figure 7: Comparison of Frobenius norm in weight matrices for BERT-large-uncased</figcaption>
 </figure>
 			    
 <figure>
@@ -429,11 +433,11 @@ Again, we were able to find a correlation between the norms of the query and key
 Our last metric was the condition number (see <a href="#maths">mathematical background section</a>). Again, we observe the same relationship between the query, key, and weight matrices, although the correlation for the condition number is weaker than the correlations of the other three metrics. 
 <figure>
     <img src="images/condition.png" alt="Sparsity" style="display: block; margin-left: auto; margin-right: auto; max-width: 100%; height: auto;">
-    <figcaption style="text-align: center;">Figure 7: Comparison of condition number in weight matrices for BERT-base-uncased</figcaption>
+    <figcaption style="text-align: center;">Figure 8: Comparison of condition number in weight matrices for BERT-base-uncased</figcaption>
 </figure>
 <figure>
     <img src="images/condition-large.png" alt="Sparsity" style="display: block; margin-left: auto; margin-right: auto; max-width: 100%; height: auto;">
-    <figcaption style="text-align: center;">Figure 8: Comparison of condition number in weight matrices for BERT-large-uncased</figcaption>
+    <figcaption style="text-align: center;">Figure 9: Comparison of condition number in weight matrices for BERT-large-uncased</figcaption>
 </figure>
 <figure>
         <p style="text-align: center;">
@@ -483,15 +487,15 @@ Our last metric was the condition number (see <a href="#maths">mathematical back
 	<br>
 	<figure>
 	    <img src="images/mnist.png" alt="Sparsity" style="display: block; margin-left: auto; margin-right: auto; max-width: 100%; height: auto;">
-	    <figcaption style="text-align: center;">Figure 9: Learning Curve for MNIST Dataset</figcaption>
+	    <figcaption style="text-align: center;">Figure 10: Learning Curve for MNIST Dataset</figcaption>
 	</figure>
 	<figure>
 	    <img src="images/fashion-mnist.png" alt="Sparsity" style="display: block; margin-left: auto; margin-right: auto; max-width: 100%; height: auto;">
-	    <figcaption style="text-align: center;">Figure 10: Learning Curve for Fashion MNIST Dataset</figcaption>
+	    <figcaption style="text-align: center;">Figure 11: Learning Curve for Fashion MNIST Dataset</figcaption>
 	</figure>
 	<figure>
 	    <img src="images/cifar.png" alt="Sparsity" style="display: block; margin-left: auto; margin-right: auto; max-width: 100%; height: auto;">
-	    <figcaption style="text-align: center;">Figure 11: Learning Curve for CIFAR10</figcaption>
+	    <figcaption style="text-align: center;">Figure 12: Learning Curve for CIFAR10</figcaption>
 	</figure>
 	<br>
 	<figure>
