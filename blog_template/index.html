@@ -348,6 +348,14 @@ Just visually, it appears that there is a relationship between the number of nea
     <figcaption>Figure 1: Comparison of sparsity in weight matrices</figcaption>
 </figure>
 <figure>
+    <img src="images/sparsity.png" alt="Sparsity" style="display: block; margin-left: auto; margin-right: auto; max-width: 100%; height: auto;">
+    <figcaption style="text-align: center;">Figure 1: Comparison of sparsity in weight matrices for BERT-base-uncased</figcaption>
+</figure>
+<figure>
+    <img src="images/sparsity-large.png" alt="Sparsity" style="display: block; margin-left: auto; margin-right: auto; max-width: 100%; height: auto;">
+    <figcaption style="text-align: center;">Figure 2: Comparison of sparsity in weight matrices for BERT-large-uncased</figcaption>
+</figure>
+<figure>
         <p style="text-align: center;">
             $$
             \begin{array}{c|ccc}
@@ -368,21 +376,22 @@ Just visually, it appears that there is a relationship between the number of nea
             $$
         </p>
         <figcaption style="text-align: center;">
-            Correlation matrices for BERT large (left) and BERT base (right) for the number of entries close to zero.
+            Correlation matrices for BERT-large-uncased (left) and BERT-base-uncased (right) for the number of entries close to zero.
         </figcaption>
     </figure>
 
 <h2>Effective Rank</h2>
 Another property of matrices is their rank, or the dimension of the span of its column vectors. Again, because of our optimization process, all of our matrices will almost certainly be full rank. We get around this by computing effective rank, which we explain more about in the <a href="#maths">mathematical background section</a>. <a href="#ref_7">[7]</a>
-
-
-<br>
-<br> \textcolor{red}{add figures as well} 
-
 <br>
 When computing effective rank across layers, heads, and types of weight matrix, we again saw a correlation between only the effective ranks of corresponding key and query matrices. This information is again summarized in our correlation matrices:
-
-
+<figure>
+    <img src="images/rank.png" alt="Sparsity" style="display: block; margin-left: auto; margin-right: auto; max-width: 100%; height: auto;">
+    <figcaption style="text-align: center;">Figure 3: Comparison of rank in weight matrices for BERT-base-uncased</figcaption>
+</figure>
+<figure>
+    <img src="images/rank-large.png" alt="Sparsity" style="display: block; margin-left: auto; margin-right: auto; max-width: 100%; height: auto;">
+    <figcaption style="text-align: center;">Figure 4: Comparison of rank in weight matrices for BERT-large-uncased</figcaption>
+</figure>
 
 <figure>
         <p style="text-align: center;">
@@ -405,7 +414,7 @@ When computing effective rank across layers, heads, and types of weight matrix, 
             $$
         </p>
         <figcaption style="text-align: center;">
-            Correlation matrices for BERT large (left) and BERT base (right) for effective rank.
+            Correlation matrices for BERT-large-uncased (left) and BERT-base-uncased (right) for effective rank.
         </figcaption>
     </figure>
 
@@ -414,9 +423,17 @@ When computing effective rank across layers, heads, and types of weight matrix, 
 
 The Frobenius norm is quite similar to the Euclidean norm for vectors—for a matrix \(A\), its defined as \(\sqrt{\sum (A_{ij})^2}.\) Similar to the Euclidean norm for vectors, it can be thought of as a measurement for the size of a matrix.
 <br>
-<br>
 Again, we were able to find a correlation between the norms of the query and key matrices, but not involving the value matrix:
 
+<figure>
+    <img src="images/frobenius.png" alt="Sparsity" style="display: block; margin-left: auto; margin-right: auto; max-width: 100%; height: auto;">
+    <figcaption style="text-align: center;">Figure 5: Comparison of Frobenius norm in weight matrices for BERT-base-uncased</figcaption>
+</figure>
+<figure>
+    <img src="images/frobenius-large.png" alt="Sparsity" style="display: block; margin-left: auto; margin-right: auto; max-width: 100%; height: auto;">
+    <figcaption style="text-align: center;">Figure 6: Comparison of Frobenius norm in weight matrices for BERT-large-uncased</figcaption>
+</figure>
+			    
 <figure>
         <p style="text-align: center;">
             $$
@@ -438,14 +455,21 @@ Again, we were able to find a correlation between the norms of the query and key
             $$
         </p>
         <figcaption style="text-align: center;">
-            Correlation matrices for BERT large (left) and BERT base (right) for Frobenius norm.
+            Correlation matrices for BERT-large-uncased (left) and BERT-base-uncased (right) for Frobenius norm.
         </figcaption>
     </figure>
     
 <h2>Condition number</h2>
 
 Our last metric was the condition number (see <a href="#maths">mathematical background section</a>). Again, we observe the same relationship between the query, key, and weight matrices, although the correlation for the condition number is weaker than the correlations of the other three metrics. 
-
+<figure>
+    <img src="images/condition.png" alt="Sparsity" style="display: block; margin-left: auto; margin-right: auto; max-width: 100%; height: auto;">
+    <figcaption style="text-align: center;">Figure 1: Comparison of condition number in weight matrices for BERT-base-uncased</figcaption>
+</figure>
+<figure>
+    <img src="images/condition-large.png" alt="Sparsity" style="display: block; margin-left: auto; margin-right: auto; max-width: 100%; height: auto;">
+    <figcaption style="text-align: center;">Figure 2: Comparison of condition number in weight matrices for BERT-large-uncased</figcaption>
+</figure>
 <figure>
         <p style="text-align: center;">
             $$
@@ -467,7 +491,7 @@ Our last metric was the condition number (see <a href="#maths">mathematical back
             $$
         </p>
         <figcaption style="text-align: center;">
-            Correlation matrices for BERT large (left) and BERT base (right) for condition number.
+            Correlation matrices for BERT-large-uncased (left) and BERT-base-uncased (right) for condition number.
         </figcaption>
     </figure>
 
