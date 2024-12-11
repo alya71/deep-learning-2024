@@ -284,9 +284,9 @@ weight matrices in the following four metrics: sparsity, rank,
 froebenius norm, and condition number. This led us to experiment on two
 novel methods of weight sharing between query and key. The first method
 is sharing the exact weight matrix between query and key, relating the
-two with a simple identity matrix. The second method is relating \[W_K\] by a Hadamard
-product with \[W_Q\] and \[W_K\], which
-preserves sparsity and ensures rank is non-increasing going from \[W_Q\] to \[W_K\]. In both
+two with a simple identity matrix. The second method is relating \(W_K\) by a Hadamard
+product with \(W_Q) and \(W_K\), which
+preserves sparsity and ensures rank is non-increasing going from \(W_Q\) to \(W_K\). In both
 these methods, less parameters are learned, which saves memory and
 compute time, without sacrificing performance.</p>
 			    
@@ -338,7 +338,7 @@ In addition to examining the kernel alignment metric, we also looked at sparsity
 						<h1>Our four metrics</h1>
 						Motivated by our observations when studying similarity across layers, we investigated the relationship between query and key matrices in the same head. 
 
-\begin{subsection}{Sparsity}
+<h2>Sparsity</h2>
 
 One property of matrices is sparsity. In the purest sense, the sparseness of a matrix is measured by the number of entries it has that are equal to zero. Because our neural network weights are tuned with an optimizer, none of the weights are exactly equal to zero. So, to capture this notion of weights that are insignificant and which could be eliminated, we counted the number of weights in each matrix who's magnitude was less than $10^{-4}$. \textcolor{red}{idk if this is needed but—}this threshold was chosen somewhat arbitrarily, but the phenomena we observe occurs for other reasonable choices as well. 
 
@@ -347,19 +347,32 @@ One property of matrices is sparsity. In the purest sense, the sparseness of a m
 
 Just visually, it appears that there is a relationship between the number of near zero entries of the query and key weights, but not with the value weights (\textcolor{red}{base bert: least sparse matrices are layer 2, head 0 / 9 for both key and query. big bert: idk rn lol}). To verify this, we computed the correlation matrix between these values. The correlation between the number of near zero entries of the value matrix and either of the query or key was insignificant, but for both sizes of BERT, the correlation coefficient between the number of near zero entries of the query and key matrix was above $0.9$.
 
-\begin{figure}
-    \centering
-    $\begin{array}{c|ccc} & \text{Q} & \text{K} & \text{V} \\ \hline \text{Q} & 1 & 0.919 & 0.001 \\ \text{K} & 0.919 & 1 & 0.108 \\ \text{V} & 0.001 & 0.108 & 1 \end{array}$
-\qquad
-$\begin{array}{c|ccc} & \text{Q} & \text{K} & \text{V} \\ \hline \text{Q} & 1 & 0.904 & -0.167 \\ \text{K} & 0.904 & 1 & -0.133 \\ \text{V} & -0.167 & -0.133 & 1 \end{array}$
-    \caption{Correlation matrices for BERT large (left) and BERT base (right) for the number of entries close to zero.}
-    \label{fig:enter-label}
+<figure>
+        <p style="text-align: center;">
+            $$
+            \begin{array}{c|ccc}
+                & \text{Q} & \text{K} & \text{V} \\
+                \hline
+                \text{Q} & 1 & 0.919 & 0.001 \\
+                \text{K} & 0.919 & 1 & 0.108 \\
+                \text{V} & 0.001 & 0.108 & 1
+            \end{array}
+            \qquad
+            \begin{array}{c|ccc}
+                & \text{Q} & \text{K} & \text{V} \\
+                \hline
+                \text{Q} & 1 & 0.904 & -0.167 \\
+                \text{K} & 0.904 & 1 & -0.133 \\
+                \text{V} & -0.167 & -0.133 & 1
+            \end{array}
+            $$
+        </p>
+        <figcaption style="text-align: center;">
+            Correlation matrices for BERT large (left) and BERT base (right) for the number of entries close to zero.
+        </figcaption>
+    </figure>
 
-\end{figure}
-
-\end{subsection}
-
-\begin{subsection}{Effective Rank}
+<h2>Effective Rank</h2>
 Another property of matrices is their rank, or the dimension of the span of its column vectors. Again, because of our optimization process, all of our matrices will almost certainly be full rank. We get around this by computing ``effective rank"\footnote{\url{https://ieeexplore.ieee.org/abstract/document/7098875}}. For any matrix $B$, we compute its singular value decomposition, $A = U \Lambda V.$ Then, entries along the diagonal of diagonal matrix $\Lambda$ are our singular values, $\sigma_1 \geq \sigma_2 \geq \cdots \geq \sigma_k.$ If we let $\sigma = (\sigma_1, \dots, \sigma_k)$, then the effective rank is equal to $\exp \left(  \sum_{i=1}^k - \frac{\sigma_i}{||\sigma||_1}  \log \left( \frac{\sigma_i}{||\sigma||_1} \right) \right)$.  \textcolor{red}{can delete or put in background lmao}
 
 This is similar to the measure of cross-entropy! Essentially, we are measuring the entropy of the singular values. If a few singular values are dominant, then the matrix is more low-rank, as the transformation is less rich.
@@ -367,56 +380,98 @@ This is similar to the measure of cross-entropy! Essentially, we are measuring t
 When computing effective rank across layers, heads, and types of weight matrix, we again saw a correlation between only the effective ranks of corresponding key and query matrices. \textcolor{red}{add figures as well} This is again summarized in our correlation matrices.
 
 
-\begin{figure}
-    \centering
-        $\begin{array}{c|ccc} & \text{Q} & \text{K} & \text{V} \\ \hline \text{Q} & 1 & 0.950 & 0.535 \\ \text{K} & 0.950 & 1 & 0.542 \\ \text{V} & 0.535 & 0.542 & 1 \end{array}$
-\qquad
-$\begin{array}{c|ccc} & \text{Q} & \text{K} & \text{V} \\ \hline \text{Q} & 1 & 0.921 & 0.348 \\ \text{K} & 0.921 & 1 & 0.301 \\ \text{V} & 0.348 & 0.301 & 1 \end{array}$
-    \caption{Correlation matrices for BERT large (left) and BERT base (right) for effective rank.}
-    \label{fig:enter-label}
+<figure>
+        <p style="text-align: center;">
+            $$
+            \begin{array}{c|ccc}
+                & \text{Q} & \text{K} & \text{V} \\
+                \hline
+                \text{Q} & 1 & 0.950 & 0.535 \\
+                \text{K} & 0.950 & 1 & 0.542 \\
+                \text{V} & 0.535 & 0.542 & 1
+            \end{array}
+            \qquad
+            \begin{array}{c|ccc}
+                & \text{Q} & \text{K} & \text{V} \\
+                \hline
+                \text{Q} & 1 & 0.921 & 0.348 \\
+                \text{K} & 0.921 & 1 & 0.301 \\
+                \text{V} & 0.348 & 0.301 & 1
+            \end{array}
+            $$
+        </p>
+        <figcaption style="text-align: center;">
+            Correlation matrices for BERT large (left) and BERT base (right) for effective rank.
+        </figcaption>
+    </figure>
 
-\end{figure}
-\end{subsection}
 
+<h2>Frobenius Norm</h2>
 
-\begin{subsection}{Frobenius Norm}
-
-The Frobenius norm is quite similar to the Euclidean norm for vectors—for a matrix $A$, its defined as $\sqrt{\sum (A_{ij})^2}.$ Similar to the Euclidean norm for vectors, it can be thought of as a measurement for the size of a matrix.
+The Frobenius norm is quite similar to the Euclidean norm for vectors—for a matrix \(A\), its defined as $\sqrt{\sum (A_{ij})^2}.$ Similar to the Euclidean norm for vectors, it can be thought of as a measurement for the size of a matrix.
 
 Again, we were able to find a correlation between the norms of the query and key matrices, but not involving the value matrix.  
 
-\begin{figure}
-    \centering
-        $\begin{array}{c|ccc} & \text{Q} & \text{K} & \text{V} \\ \hline \text{Q} & 1 & 0.980 & -0.060 \\ \text{K} & 0.980 & 1 & 0.036 \\ \text{V} & -0.060 & 0.036 & 1 \end{array}$
-\qquad
-$\begin{array}{c|ccc} & \text{Q} & \text{K} & \text{V} \\ \hline \text{Q} & 1 & 0.987 & -0.266 \\ \text{K} & 0.987 & 1 & -0.243 \\ \text{V} & -0.266 & -0.243 & 1 \end{array}$
-    \caption{Correlation matrices for BERT large (left) and BERT base (right) for Frobenius norm.}
-    \label{fig:enter-label}
-
-\end{figure}
+<figure>
+        <p style="text-align: center;">
+            $$
+            \begin{array}{c|ccc}
+                & \text{Q} & \text{K} & \text{V} \\
+                \hline
+                \text{Q} & 1 & 0.980 & -0.060 \\
+                \text{K} & 0.980 & 1 & 0.036 \\
+                \text{V} & -0.060 & 0.036 & 1
+            \end{array}
+            \qquad
+            \begin{array}{c|ccc}
+                & \text{Q} & \text{K} & \text{V} \\
+                \hline
+                \text{Q} & 1 & 0.987 & -0.266 \\
+                \text{K} & 0.987 & 1 & -0.243 \\
+                \text{V} & -0.266 & -0.243 & 1
+            \end{array}
+            $$
+        </p>
+        <figcaption style="text-align: center;">
+            Correlation matrices for BERT large (left) and BERT base (right) for Frobenius norm.
+        </figcaption>
+    </figure>
     
-\end{subsection}
-
+<h2>Condition number</h2>
 \begin{subsection}{Condition number}
 
 Our last metric was the condition number, which is the ratio of the magnitude of the largest singular value to the smallest singular value. When this is large, that indicates that a certain direction dominates in the mapping performed by the matrix, which indicates that the matrix is less stable, because a small perturbation in the input is more likely to result in a substantially different output.
 
 Again, we observe the same relationship between the query, key, and weight matrices, although the correlation for the condition number is weaker than the correlations of the other three metrics. 
 
-\begin{figure}
-    \centering
-$\begin{array}{c|ccc} & \text{Q} & \text{K} & \text{V} \\ \hline \text{Q} & 1 & 0.912 & 0.391 \\ \text{K} & 0.912 & 1 & 0.445 \\ \text{V} & 0.391 & 0.445 & 1 \end{array}$ 
-\qquad
-$\begin{array}{c|ccc} & \text{Q} & \text{K} & \text{V} \\ \hline \text{Q} & 1 & 0.854 & 0.236 \\ \text{K} & 0.854 & 1 & 0.269 \\ \text{V} & 0.236 & 0.269 & 1 \end{array}$
-    \caption{Correlation matrices for BERT large (left) and BERT base (right) for condition number.}
-    \label{fig:enter-label}
+<figure>
+        <p style="text-align: center;">
+            $$
+            \begin{array}{c|ccc}
+                & \text{Q} & \text{K} & \text{V} \\
+                \hline
+                \text{Q} & 1 & 0.912 & 0.391 \\
+                \text{K} & 0.912 & 1 & 0.445 \\
+                \text{V} & 0.391 & 0.445 & 1
+            \end{array}
+            \qquad
+            \begin{array}{c|ccc}
+                & \text{Q} & \text{K} & \text{V} \\
+                \hline
+                \text{Q} & 1 & 0.854 & 0.236 \\
+                \text{K} & 0.854 & 1 & 0.269 \\
+                \text{V} & 0.236 & 0.269 & 1
+            \end{array}
+            $$
+        </p>
+        <figcaption style="text-align: center;">
+            Correlation matrices for BERT large (left) and BERT base (right) for condition number.
+        </figcaption>
+    </figure>
 
-\end{figure}
+	<h1>Experiments on ViTs</h1>
     
-\end{subsection}
-
-\textcolor{red}{can delete} As an addendum, we did notice that the condition number decreases and the effective rank increases as we go to deeper layers for the key and query matrices. This could be related to our initial hypothesis that the changes made at later layers are less drastic, so they are more stable and more likely to be full rank. 
-		    </div>
+		</div>
 		    <div class="margin-right-block">
 		    </div>
 		</div>
