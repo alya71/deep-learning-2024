@@ -224,7 +224,8 @@
               <a href="#intro">Introduction</a><br><br>
               <a href="#does_x_do_y">Does X do Y?</a><br><br>
               <a href="#implications_and_limitations">Implications and limitations</a><br><br>
-          </div>
+          </div>    m m m m m 
+					
 				</div>
 		    <div class="main-content-block">
             <!--You can embed an image like this:-->
@@ -240,8 +241,16 @@
 				</div>
 		    <div class="main-content-block">
 						<h1>Introduction</h1>
-            Motivate your project. What question are you asking. Why is it unanswered so far? What gap in the literature or practice are you filling?
-            Why is it important?
+            The Transformer model was introduced in 2017 \footnote{\url{https://arxiv.org/abs/1706.03762}}. Since then, it has achieved remarkable progress in a variety of tasks, including computer vision \footnote{\url{https://arxiv.org/pdf/2005.12872}} and natural language processing \footnote{\url{https://arxiv.org/pdf/1906.08237}}. 
+
+Due to how large many transformer models are, it is nontrivial to understand their behavior and determine how they could be modified. But, such work would be greatly beneficial to determine how to reduce the memory or computation needed for training, as well as increase interpretability. 
+
+One avenue along which this has been pursued is examining the representations that different models use. Huh et al. propose a platonic/ideal representation\footnote{\url{https://arxiv.org/pdf/2405.07987}}—the notion that there's a certain representation that is most effective at capturing data, and many models across modalities get close to this. Such a result led us to hypothesize that as the layer of a model increases, there is less variation in the weights of the attention matrices because it is approaching this ideal representation. In other words, in the later layers, we are more likely to be making smaller adjustments to the hidden state of a given embedding. 
+
+Another reason we were motivated in believing that there can be similarity between later adjacent layers is because of the success of Recurrent Neural Networks\footnote{\url{https://sophieeunajang.wordpress.com/wp-content/uploads/2020/10/lstm.pdf}}. Before the transformer architecture was introduced, tasks like translation (i.e. Google Translate) would use Long Short Term Memory. The recurrent inductive bias that RNNs have has been shown to be important on various natural language processing tasks\footnote{\url{https://arxiv.org/pdf/1807.03819}}, and thus, we hypothesized that models might discover this after training. 
+
+As we were examining how the query, key, and value matrices varied across layers of the model, we discovered that there is a strong, statistically significant correlation between the key weight and query weight matrices in the following four metrics: sparsity, rank, Froebenius norm, and condition number. This led us to experiment on two novel methods of weight sharing between query and key. The first method is sharing the exact weight matrix between query and key, relating the two with a simple identity matrix. The second method is relating $W_K$ by a Hadamard product with $W_Q$ and $W_K$, which preserves sparsity and ensures rank is non-increasing going from $W_Q$ to $W_K$. In both these methods, less parameters are learned, which saves memory and compute time, without sacrificing performance.
+
 		    </div>
 		    <div class="margin-right-block">
 						Margin note that clarifies some detail #main-content-block for intro section.
