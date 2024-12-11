@@ -236,13 +236,7 @@
           </div>    
 					
 				</div>
-		    <div class="main-content-block">
-            <!--You can embed an image like this:-->
-            <img src="./images/your_image_here.png" width=512px/>
-		    </div>
-		    <div class="margin-right-block">
-						Caption for the image.
-		    </div>
+	
 		</div>
 
     <div class="content-margin-container" id="intro">
@@ -291,8 +285,7 @@ these methods, less parameters are learned, which saves memory and
 compute time, without sacrificing performance.</p>
 			    
 		    </div>
-		    <div class="margin-right-block">
-						Margin note that clarifies some detail #main-content-block for intro section.
+		    <div>
 		    </div>
 		</div>
 
@@ -310,31 +303,7 @@ Our inference was preformed on the large, uncased BERT model. For a layer index 
 As shown in the figures, the magnitude of the kernel alignment score remains relatively low for the query, key, and value matrices as we increase the layer. This does not support our hypothesis that later layers are more similar. Upon further reflection, such a result seems sensible—effectively, if two layers were relatively similar, applying them sequentially would not be all that different from just applying a scaled version of one of them. Therefore, if many of the layers were similar, such a network could be less adept at learning complex representations, so it makes sense for networks to fully utilize their parameters by having more distinct layers.
 <br><br>
 In addition to examining the kernel alignment metric, we also looked at sparsity, rank, the Frobenius norm, and the condition number. However, the most interesting trends observed with these metrics have to deal with the relationship between query and key matrices rather than their evolution through the layers, so the graphs are attached in the next section.
-<!-- 		    </div>
-		    <div class="margin-right-block" style="transform: translate(0%, -100%);"> <!-- you can move the margin notes up and down with translate -->
-          Interestingly, Plato also asked if X does Y, in <a href="#ref_1">[1]</a>.
-		    </div>
-		</div>
 
-		<div class="content-margin-container">
-				<div class="margin-left-block">
-				</div>
-		    <div class="main-content-block">
-            <h1>Another section</h1>
-            In this section we embed a video:
-						<video class='my-video' loop autoplay muted style="width: 725px">
-								<source src="./images/mtsh.mp4" type="video/mp4">
-						</video>
-		    </div>
-		    <div class="margin-right-block">
-					A caption for the video could go here.
-		    </div>
-		</div>
-
-		<div class="content-margin-container" id="implications_and_limitations">
-				<div class="margin-left-block">
-				</div>
-		    <div class="main-content-block"> -->
 						<h1>Our four metrics</h1>
 						Motivated by our observations when studying similarity across layers, we investigated the relationship between query and key matrices in the same head. 
 
@@ -559,7 +528,7 @@ Our last metric was the condition number (see <a href="#maths">mathematical back
 
 	<h1>Experiments on Finetuning BERT</h1>
 
-	We finetune BERT for sentiment analysis with the IMDb dataset once with standard weights and once with our identity-shared weights to compare their accuracies. Prior analysis of an open source BERT model finetuned for sentiment analysis revealed that attention heads only changed in the last 3 of 12 layers. Thus, for our model with identity-shared weights, we only enforce this \(W_Q = W_K\) for the last 3 layers. We use BERT-base-uncased as our pretrained model and use the following hyperparameters as suggested in the original BERT paper: learning rate \(5e^{-5}\) with Adam optimizer, batch size 16, and 3 epochs. Our identity-shared weights performed slightly worse on validation data compared to the standard weights with these settings, but with some hyperparameter tuning, we believe could result in similar or better accuracy. 
+	We finetune BERT for sentiment analysis with the IMDb dataset once with standard weights and once with our identity-shared weights to compare their accuracies. Prior analysis of an open source BERT model finetuned for sentiment analysis revealed that attention heads only changed in the last 3 of 12 layers. Thus, for our model with identity-shared weights, we only enforce this \(W_Q = W_K\) for the last 3 layers. We use BERT-base-uncased as our pretrained model and use the following hyperparameters as suggested in the original BERT paper: learning rate \(5e^{-5}\) with Adam optimizer, batch size 16, and 3 epochs. <a href="#ref_11">[11]</a> Our identity-shared weights performed slightly worse on validation data compared to the standard weights with these settings, but with some hyperparameter tuning, we believe could result in similar or better accuracy. 
 	<br>
 	<figure>
         <p style="text-align: center;">
@@ -585,7 +554,7 @@ Our last metric was the condition number (see <a href="#maths">mathematical back
 
 	<br><br>
 
-	The only previous research we could find that set the query and key matrices equal to each other but left the value matrix independent was in Reformer <a href="#ref_11">[11]</a>. This is an alternative architecture that achieves less computations by only taking the dot product of query/key vectors that are in similar buckets, an approximation for determining the dot products that will have the largest magnitude. The focus of this paper was not on the query and key matrices being the same, rather, this was a choice that was necessary in order for them to implement Locality Search Hashing in a way that resulted in less computations. 
+	The only previous research we could find that set the query and key matrices equal to each other but left the value matrix independent was in Reformer <a href="#ref_12">[12]</a>. This is an alternative architecture that achieves less computations by only taking the dot product of query/key vectors that are in similar buckets, an approximation for determining the dot products that will have the largest magnitude. The focus of this paper was not on the query and key matrices being the same, rather, this was a choice that was necessary in order for them to implement Locality Search Hashing in a way that resulted in less computations. 
 
 	<br><br>
 
@@ -597,7 +566,7 @@ Our last metric was the condition number (see <a href="#maths">mathematical back
 
 	<br><br>
 
-	Lastly, in addition to parameter sharing across different types of weight matrices, there are also models that use the same weights across different layers. In the Universal Transformer, Dehghani et al. introduced the earliest example of this, where the weights are the same across different layers in their recurrent encoder block and recurrent decoder block <a href="#ref_6">[6]</a>. Dabre et al. were able to kept the same weights and also achieving a space reduction <a href="#ref_12">[12]</a>, and Lan et al. considered the effects of sharing only attention weights and only weights of the feedforward network. Less restrictive sharing architectures were also proposed, such as one that has cyclical sharing—layers \(\{1,4\}, \{2,5\},\) and \(\{3,6\}\) share parameters, tripling the number of parameters. <a href="#ref_13">[13]</a> 
+	Lastly, in addition to parameter sharing across different types of weight matrices, there are also models that use the same weights across different layers. In the Universal Transformer, Dehghani et al. introduced the earliest example of this, where the weights are the same across different layers in their recurrent encoder block and recurrent decoder block <a href="#ref_6">[6]</a>. Dabre et al. were able to kept the same weights and also achieving a space reduction <a href="#ref_13">[13]</a>, and Lan et al. considered the effects of sharing only attention weights and only weights of the feedforward network. Less restrictive sharing architectures were also proposed, such as one that has cyclical sharing—layers \(\{1,4\}, \{2,5\},\) and \(\{3,6\}\) share parameters, tripling the number of parameters. <a href="#ref_14">[14]</a> 
 
 	<h1>Conclusion</h1>
 
@@ -669,9 +638,10 @@ The condition number is the ratio of the magnitude of the largest singular value
 							<a id="ref_8"></a>[8] <a href="https://ieeexplore.ieee.org/abstract/document/7098875">Longformer: The Long-Document Transformer</a>, Beltagy et al., 2020<br><br>
 							<a id="ref_9"></a>[9] <a href="https://arxiv.org/abs/1503.02531">Distilling the Knowledge in a Neural Network</a>, Hinton et al., 2015<br><br>
 							<a id="ref_10"></a>[10] <a href="https://arxiv.org/abs/1910.01348">On the Efficacy of Knowledge Distillation</a>, Cho and Hariharan, 2019<br><br>
-							<a id="ref_11"></a>[11] <a href="https://arxiv.org/abs/2001.04451">Reformer: The Efficient Transformer</a>, Kitaev et al., 2020<br><br>
-							<a id="ref_12"></a>[12] <a href="https://arxiv.org/abs/1807.05353">Recurrent Stacking of Layers for Compact Neural Machine Translation Models</a>, Dabre and Fujita, 2018<br><br>
-							<a id="ref_13"></a>[13] <a href="https://arxiv.org/abs/1909.11942">ALBERT: A Lite BERT for Self-supervised Learning of Language Representations</a>, Lan et al., 2019<br><br>
+							<a id="ref_11"></a>[11] <a href="https://arxiv.org/abs/2001.04451"> BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</a>, Devlin et al., 2018<br><br>
+							<a id="ref_12"></a>[12] <a href="https://arxiv.org/abs/1810.04805">Reformer: The Efficient Transformer</a>, Kitaev et al., 2020<br><br>
+							<a id="ref_13"></a>[13] <a href="https://arxiv.org/abs/1807.05353">Recurrent Stacking of Layers for Compact Neural Machine Translation Models</a>, Dabre and Fujita, 2018<br><br>
+							<a id="ref_14"></a>[14] <a href="https://arxiv.org/abs/1909.11942">ALBERT: A Lite BERT for Self-supervised Learning of Language Representations</a>, Lan et al., 2019<br><br>
 						</div>
 		    </div>
 		    <div class="margin-right-block">
