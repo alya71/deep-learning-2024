@@ -231,9 +231,9 @@
           <div style="position:fixed; max-width:inherit; top:max(20%,120px)">
               <b style="font-size:16px">Outline</b><br><br>
               <a href="#intro">Introduction</a><br><br>
-              <a href="#does_x_do_y">Does X do Y?</a><br><br>
+              <a href="#sim_acc">Does X do Y?</a><br><br>
               <a href="#implications_and_limitations">Implications and limitations</a><br><br>
-          </div>    m m m m m 
+          </div>    
 					
 				</div>
 		    <div class="main-content-block">
@@ -296,7 +296,7 @@ compute time, without sacrificing performance.</p>
 		    </div>
 		</div>
 
-		<div class="content-margin-container" id="does_x_do_y">
+		<div class="content-margin-container" id="sim_acc">
 				<div class="margin-left-block">
 				</div>
 		    <div class="main-content-block">
@@ -491,19 +491,9 @@ Our last metric was the condition number (see <a href="#maths">mathematical back
 	<br>
 
 	We construct a ViT with 6 layers, with each layer being a 3-head attention followed by a simple feed forward network, an MLP. The parameters we used for training are 18 or 10 epochs, Adam optimizer, learning rate of 0.001, and cross entropy loss. We then train and evaluate on CIFAR10, MNIST, and FashionMNIST. Comparing the performance of standard weights versus identity-shared weights, we find that identity-shared weights perform extremely similarly. 
-	<br>
-	<br>
-	insert table
-	<br>
-	<br>
 	Comparing the performance of standard weights versus Hadamard-shared weights, we find that Hadamard-shared weights also perform slightly better. 
 	<br>
 	<br>
-	*Figures*
-	<br>
-	<br>
-	One thing we notice is that these models tend to overfit, both for the original and adjusted weights. We see the difference in training and validation accuracy most clearly in CIFAR10. The model also overfits for both MNIST datasets, except it is not immediately visible because both accuracies are so high.
-
 	<figure>
         <p style="text-align: center;">
             $$
@@ -519,6 +509,10 @@ Our last metric was the condition number (see <a href="#maths">mathematical back
             Performance comparison of various models with standard, identity-shared, and Hadamard-shared configurations.
         </figcaption>
     </figure>
+	<br>
+	One thing we notice is that these models tend to overfit, both for the original and adjusted weights. We see the difference in training and validation accuracy most clearly in CIFAR10. The model also overfits for both MNIST datasets, except it is not immediately visible because both accuracies are so high.
+
+
 
 
 	<h1>Analysis of ViT Performance</h1>
