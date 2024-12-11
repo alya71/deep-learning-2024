@@ -262,8 +262,7 @@ memory or computation needed for training, as well as increase
 interpretability.</p>
 <p>One avenue along which this has been pursued is by examining the
 representations that different models use. Huh et al. propose a
-platonic/ideal representation<a href="#fn4" class="footnote-ref"
-id="fnref4" role="doc-noteref"><sup>4</sup></a>—the notion that there’s
+platonic/ideal representation <a href="#ref_4">[4]</a>—the notion that there’s
 a certain representation that is most effective at capturing data, and
 many models get close to this. Such a result led us to hypothesize that
 as the layer of a model increases, because it is approaching this ideal
@@ -272,13 +271,11 @@ matrices. In other words, in the later layers we are more likely to be
 making smaller adjustments to the hidden state of a given embedding.</p>
 <p>Another reason we were motivated in believing that there can be
 similarity between later adjacent layers is because of the success of
-Recurrent Neural Networks<a href="#fn5" class="footnote-ref" id="fnref5"
-role="doc-noteref"><sup>5</sup></a>. Before the transformer architecture
+Recurrent Neural Networks <a href="#ref_5">[5]</a>. Before the transformer architecture
 was introduced, tasks like translation (i.e. Google Translate) would use
 Long Short Term Memory. The recurrent inductive bias that RNNs have has
 been shown to be important on various natural language processing
-tasks<a href="#fn6" class="footnote-ref" id="fnref6"
-role="doc-noteref"><sup>6</sup></a>, and thus, we hypothesized that
+tasks <a href="#ref_6">[6]</a>, and thus, we hypothesized that
 models might discover this after training.</p>
 <p>As we were examining how the query, key, and value matrices varied
 across layers of the model, we discovered that there is a strong,
@@ -305,13 +302,13 @@ compute time, without sacrificing performance.</p>
 		    <div class="main-content-block">
 					<h1>Similarity across layers</h1>
 				  In order to examine our hypothesis that later layers are more similar to one another, we examined the progression of various metrics of the query, key, and value matrices of each head across the layers. 
-
+<br><br>
 Our first metric was looking at the kernel alignment metric, which measures how similar two mappings are. Given two matrices \(P, Q\), the kernel alignment metric is given by
 \[ \frac{\text{Tr}(P Q)}{\sqrt{\text{Tr}(P^2) \cdot \text{Tr}(Q^2)}}. \]
 Our inference was preformed on the large, uncased BERT model. For a layer index \(i\) ranging from 0 to 22 (inclusive), we computed the kernel alignment metric between the \(\{\text{query}, \text{key}, \text{value}\}\) weight matrix in head \(j\) in layer \(i\), and the corresponding matrix in head \(j\) in layer \(i+1\). Our results are displayed in the figures below \textcolor{red}{(steal from ``Similarity across layers within the same head") part of the paper}
-
-As shown in the figures, the magnitude of the kernel alignment score remains relatively low for the query, key, and value matrices as we increase the layer. This does not support our hypothesis that later layers are more similar. \textcolor{red}{idk if we want to do analysis here?} Upon further reflection, such a result seems sensible—effectively, if two layers were relatively similar, applying them sequentially would not be all that different from just applying a scaled version of one of them. Therefore, if many of the layers were similar, such a network could be less adept at learning complex representations, so it makes sense for networks to fully utilize their parameters by having more distinct layers.
-
+<br><br>
+As shown in the figures, the magnitude of the kernel alignment score remains relatively low for the query, key, and value matrices as we increase the layer. This does not support our hypothesis that later layers are more similar. Upon further reflection, such a result seems sensible—effectively, if two layers were relatively similar, applying them sequentially would not be all that different from just applying a scaled version of one of them. Therefore, if many of the layers were similar, such a network could be less adept at learning complex representations, so it makes sense for networks to fully utilize their parameters by having more distinct layers.
+<br><br>
 In addition to examining the kernel alignment metric, we also looked at sparsity, rank, the Frobenius norm, and the condition number. However, the most interesting trends observed with these metrics have to deal with the relationship between query and key matrices rather than their evolution through the layers, so the graphs are attached in the next section.
 		    </div>
 		    <div class="margin-right-block" style="transform: translate(0%, -100%);"> <!-- you can move the margin notes up and down with translate -->
@@ -377,7 +374,7 @@ Just visually, it appears that there is a relationship between the number of nea
     </figure>
 
 <h2>Effective Rank</h2>
-Another property of matrices is their rank, or the dimension of the span of its column vectors. Again, because of our optimization process, all of our matrices will almost certainly be full rank. We get around this by computing effective rank, which we explain more about in the <a href="#maths">mathematical background section</a>. \footnote{\url{https://ieeexplore.ieee.org/abstract/document/7098875}}. 
+Another property of matrices is their rank, or the dimension of the span of its column vectors. Again, because of our optimization process, all of our matrices will almost certainly be full rank. We get around this by computing effective rank, which we explain more about in the <a href="#maths">mathematical background section</a>. <a href="#ref_7">[7]</a>
 
 
 <br>
@@ -507,6 +504,23 @@ Our last metric was the condition number (see <a href="#maths">mathematical back
 	<br>
 	One thing we notice is that these models tend to overfit, both for the original and adjusted weights. We see the difference in training and validation accuracy most clearly in CIFAR10. The model also overfits for both MNIST datasets, except it is not immediately visible because both accuracies are so high.
 
+	<figure>
+        <p style="text-align: center;">
+            $$
+            \begin{array}{c|c|c|c} 
+    \textbf{Model} & \textbf{Standard} & \textbf{Identity-shared} & \textbf{Hadamard-shared} \\ \hline 
+    \text{MNIST-ViT} & 0.9864 & 0.9852 & - \\
+    \text{fashionMNIST-ViT} & 0.8911 & 0.8917 & - \\
+    \text{CIFAR10-ViT} & 0.5967 & 0.6361 & 0.6191 \\
+    \end{array}
+            $$
+        </p>
+        <figcaption style="text-align: center;">
+            Performance comparison of various models with standard, identity-shared, and Hadamard-shared configurations.
+        </figcaption>
+    </figure>
+
+
 	<h1>Analysis of ViT Performance</h1>
 
 	As previously noted, all of our ViT models overfit on all of our datasets. This is likely because the number of parameters exceeds what is necessary, as the examples we trained them on were not the most difficult. Although the difference is not incredibly substantial, it is interesting that the identity and Hadamard product alternative models achieve both a higher validation accuracy and lower training accuracy than the standard model on CIFAR, suggesting that they overfit less. 
@@ -514,16 +528,28 @@ Our last metric was the condition number (see <a href="#maths">mathematical back
 	<br><br>
 	Because ViT does not have the inductive bias of translation equivariance and generally has a lot of parameters, it makes sense that overfitting would occur. Although it may be counter-intuitive that more restrictive models perform better than more general models (for example, CNNs are more restrictive than transformers and generally preform worse), this phenomena has been observed in other circumstances as well. 
 	<br><br>
-	For example, Longformer\footnote{\url{https://arxiv.org/pdf/2004.05150}} is an alternative Transformer architecture that only involves a sliding attention window and a few tokens that have global attention (standard attention involves every token attending globally to all other tokens). This is also a restricted case of the standard Transformer, but they achieved better performance than RoBERTa. 
+	For example, Longformer is an alternative Transformer architecture that only involves a sliding attention window and a few tokens that have global attention (standard attention involves every token attending globally to all other tokens). <a href="#ref_8">[8]</a> This is also a restricted case of the standard Transformer, but they achieved better performance than RoBERTa. 
 	<br><br>
-	Going beyond Transformers, in knowledge distillation, a smaller model learns its weights from the results of a larger one. Despite having less parameters to tune, it generally achieves better accuracy than the baseline model.\footnote{\url{https://arxiv.org/pdf/1503.02531}}\footnote{\url{https://openaccess.thecvf.com/content_ICCV_2019/html/Cho_On_the_Efficacy_of_Knowledge_Distillation_ICCV_2019_paper.html}}
+	Going beyond Transformers, in knowledge distillation, a smaller model learns its weights from the results of a larger one. Despite having less parameters to tune, it generally achieves better accuracy than the baseline model. <a href="#ref_9">[9]</a> <a href="#ref_10">[10]</a>
 
 	<h1>Experiments on Finetuning BERT</h1>
 
-	We finetune BERT for sentiment analysis with the IMDb dataset once with standard weights and once with our identity-shared weights. Prior analysis of an open source BERT model finetuned for sentiment analysis revealed that attention heads only changed in the last 3 of 12 layers. Thus, for our identity-shared weights, we only enforce this for the last 3 layers. We use BERT-base-uncased as our pretrained model and use the following hyperparameters as suggested in the original BERT paper: learning rate \(5e^{-5}\) with Adam optimizer, batch size 16, and 3 epochs. Our identity-shared weights performed slightly worse on validation data compared to the standard weights.
+	We finetune BERT for sentiment analysis with the IMDb dataset once with standard weights and once with our identity-shared weights to compare their accuracies. Prior analysis of an open source BERT model finetuned for sentiment analysis revealed that attention heads only changed in the last 3 of 12 layers. Thus, for our model with identity-shared weights, we only enforce this \(W_Q = W_K\) for the last 3 layers. We use BERT-base-uncased as our pretrained model and use the following hyperparameters as suggested in the original BERT paper: learning rate \(5e^{-5}\) with Adam optimizer, batch size 16, and 3 epochs. Our identity-shared weights performed slightly worse on validation data compared to the standard weights with these settings, but with some hyperparameter tuning, we believe could result in similar or better accuracy.
 
 	<br><br>
-	add figure
+	<figure>
+        <p style="text-align: center;">
+            $$
+			\begin{array}{c|c|c} 
+			\textbf{Model} & \textbf{Standard} & \textbf{Identity-shared} \\ \hline 
+			\text{IMDB-BERT} & 0.9328 & 0.9147
+			\end{array}
+            $$
+        </p>
+        <figcaption style="text-align: center;">
+            Performance comparison for IMDB-BERT model with and without sharing.
+        </figcaption>
+    </figure>
 
 	<h1>Literature Review</h1>
 
@@ -535,7 +561,7 @@ Our last metric was the condition number (see <a href="#maths">mathematical back
 
 	<br><br>
 
-	The only previous research we could find that set the query and key matrices equal to each other but left the value matrix independent was in Reformer,\footnote{\url{https://arxiv.org/abs/2001.04451}}. This is an alternative architecture that achieves less computations by only taking the dot product of query/key vectors that are in similar buckets, an approximation for determining the dot products that will have the largest magnitude. The focus of this paper was not on the query and key matrices being the same, rather, this was a choice that was necessary in order for them to implement Locality Search Hashing in a way that resulted in less computations. 
+	The only previous research we could find that set the query and key matrices equal to each other but left the value matrix independent was in Reformer <a href="#ref_11">[11]</a>. This is an alternative architecture that achieves less computations by only taking the dot product of query/key vectors that are in similar buckets, an approximation for determining the dot products that will have the largest magnitude. The focus of this paper was not on the query and key matrices being the same, rather, this was a choice that was necessary in order for them to implement Locality Search Hashing in a way that resulted in less computations. 
 
 	<br><br>
 
@@ -547,7 +573,7 @@ Our last metric was the condition number (see <a href="#maths">mathematical back
 
 	<br><br>
 
-	Lastly, in addition to parameter sharing across different types of weight matrices, there are also models that use the same weights across different layers. In the Universal Transformer, Dehghani et al. introduced the earliest example of this, where the weights are the same across different layers in their recurrent encoder block and recurrent decoder block \url{https://ojs.aaai.org/index.php/AAAI/article/view/4590}. Dabre et al. were able to improve on this by also keeping the same weights and achieving a space reduction \url{https://arxiv.org/abs/1807.03819}, and Lan et al. considered the effects of sharing only attention weights and only weights of the feedforward network. Less restrictive sharing architectures were also proposed, such as one that has cyclical sharing—layers \(\{1,4\}, \{2,5\},\) and \(\{3,6\}\) share parameters, tripling the number of parameters. 
+	Lastly, in addition to parameter sharing across different types of weight matrices, there are also models that use the same weights across different layers. In the Universal Transformer, Dehghani et al. introduced the earliest example of this, where the weights are the same across different layers in their recurrent encoder block and recurrent decoder block <a href="#ref_6">[6]</a>. Dabre et al. were able to kept the same weights and also achieving a space reduction <a href="#ref_12">[12]</a>, and Lan et al. considered the effects of sharing only attention weights and only weights of the feedforward network. Less restrictive sharing architectures were also proposed, such as one that has cyclical sharing—layers \(\{1,4\}, \{2,5\},\) and \(\{3,6\}\) share parameters, tripling the number of parameters. <a href="#ref_13">[13]</a> 
 
 	<h1>Conclusion</h1>
 
@@ -612,6 +638,16 @@ The condition number is the ratio of the magnitude of the largest singular value
 							<a id="ref_1"></a>[1] <a href="https://arxiv.org/abs/1706.03762">Attention Is All You Need</a>, Vaswani et al., 2017<br><br>
 							<a id="ref_2"></a>[2] <a href="https://link.springer.com/chapter/10.1007/978-3-030-58452-8_13">End-to-End Object Detection with Transformers</a>, Carion et al., 2020<br><br>
 							<a id="ref_3"></a>[3] <a href="https://arxiv.org/abs/1906.08237">XLNet: Generalized Autoregressive Pretraining for Language Understanding</a>, Yang et al., 2019<br><br>
+							<a id="ref_4"></a>[4] <a href="https://arxiv.org/abs/2405.07987">The Platonic Representation Hypothesis</a>, Huh et al., 2024<br><br>
+							<a id="ref_5"></a>[5] <a href="https://doi.org/10.1162%2Fneco.1997.9.8.1735">Long Short-term Memory</a>, Hochreiter and Schmidhuber, 1997<br><br>
+							<a id="ref_6"></a>[6] <a href="https://arxiv.org/abs/1807.03819">Universal Transformers</a>, Dehghani et al., 2018<br><br>
+							<a id="ref_7"></a>[7] <a href="https://ieeexplore.ieee.org/abstract/document/7098875">The effective rank: A measure of effective dimensionality</a>, Roy and Vetterli, 2007<br><br>
+							<a id="ref_8"></a>[8] <a href="https://ieeexplore.ieee.org/abstract/document/7098875">Longformer: The Long-Document Transformer</a>, Beltagy et al., 2020<br><br>
+							<a id="ref_9"></a>[9] <a href="https://arxiv.org/abs/1503.02531">Distilling the Knowledge in a Neural Network</a>, Hinton et al., 2015<br><br>
+							<a id="ref_10"></a>[10] <a href="https://arxiv.org/abs/1910.01348">On the Efficacy of Knowledge Distillation</a>, Cho and Hariharan, 2019<br><br>
+							<a id="ref_11"></a>[11] <a href="https://arxiv.org/abs/2001.04451">Reformer: The Efficient Transformer</a>, Kitaev et al., 2020<br><br>
+							<a id="ref_12"></a>[12] <a href="https://arxiv.org/abs/1807.05353">Recurrent Stacking of Layers for Compact Neural Machine Translation Models</a>, Dabre and Fujita, 2018<br><br>
+							<a id="ref_13"></a>[13] <a href="https://arxiv.org/abs/1909.11942">ALBERT: A Lite BERT for Self-supervised Learning of Language Representations</a>, Lan et al., 2019<br><br>
 						</div>
 		    </div>
 		    <div class="margin-right-block">
