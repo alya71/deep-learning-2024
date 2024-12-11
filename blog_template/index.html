@@ -310,7 +310,7 @@ Our inference was preformed on the large, uncased BERT model. For a layer index 
 As shown in the figures, the magnitude of the kernel alignment score remains relatively low for the query, key, and value matrices as we increase the layer. This does not support our hypothesis that later layers are more similar. Upon further reflection, such a result seems sensible—effectively, if two layers were relatively similar, applying them sequentially would not be all that different from just applying a scaled version of one of them. Therefore, if many of the layers were similar, such a network could be less adept at learning complex representations, so it makes sense for networks to fully utilize their parameters by having more distinct layers.
 <br><br>
 In addition to examining the kernel alignment metric, we also looked at sparsity, rank, the Frobenius norm, and the condition number. However, the most interesting trends observed with these metrics have to deal with the relationship between query and key matrices rather than their evolution through the layers, so the graphs are attached in the next section.
-		    </div>
+<!-- 		    </div>
 		    <div class="margin-right-block" style="transform: translate(0%, -100%);"> <!-- you can move the margin notes up and down with translate -->
           Interestingly, Plato also asked if X does Y, in <a href="#ref_1">[1]</a>.
 		    </div>
@@ -334,7 +334,7 @@ In addition to examining the kernel alignment metric, we also looked at sparsity
 		<div class="content-margin-container" id="implications_and_limitations">
 				<div class="margin-left-block">
 				</div>
-		    <div class="main-content-block">
+		    <div class="main-content-block"> -->
 						<h1>Our four metrics</h1>
 						Motivated by our observations when studying similarity across layers, we investigated the relationship between query and key matrices in the same head. 
 
