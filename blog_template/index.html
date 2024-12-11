@@ -380,11 +380,20 @@ Just visually, it appears that there is a relationship between the number of nea
     </figure>
 
 <h2>Effective Rank</h2>
-Another property of matrices is their rank, or the dimension of the span of its column vectors. Again, because of our optimization process, all of our matrices will almost certainly be full rank. We get around this by computing ``effective rank"\footnote{\url{https://ieeexplore.ieee.org/abstract/document/7098875}}. For any matrix $B$, we compute its singular value decomposition, $A = U \Lambda V.$ Then, entries along the diagonal of diagonal matrix $\Lambda$ are our singular values, $\sigma_1 \geq \sigma_2 \geq \cdots \geq \sigma_k.$ If we let $\sigma = (\sigma_1, \dots, \sigma_k)$, then the effective rank is equal to $\exp \left(  \sum_{i=1}^k - \frac{\sigma_i}{||\sigma||_1}  \log \left( \frac{\sigma_i}{||\sigma||_1} \right) \right)$.  \textcolor{red}{can delete or put in background lmao}
+Another property of matrices is their rank, or the dimension of the span of its column vectors. Again, because of our optimization process, all of our matrices will almost certainly be full rank. We get around this by computing ``effective rank"\footnote{\url{https://ieeexplore.ieee.org/abstract/document/7098875}}. For any matrix \(B\), we compute its singular value decomposition, \(A = U \Lambda V.\) Then, entries along the diagonal of diagonal matrix \(\Lambda\) are our singular values, \(\sigma_1 \geq \sigma_2 \geq \cdots \geq \sigma_k.\) If we let \(\sigma = (\sigma_1, \dots, \sigma_k)\), then the effective rank is equal to \(\exp \left(  \sum_{i=1}^k - \frac{\sigma_i}{||\sigma||_1}  \log \left( \frac{\sigma_i}{||\sigma||_1} \right) \right)\).  \textcolor{red}{can delete or put in background lmao}
+
+<br>
+<br>
 
 This is similar to the measure of cross-entropy! Essentially, we are measuring the entropy of the singular values. If a few singular values are dominant, then the matrix is more low-rank, as the transformation is less rich.
 
-When computing effective rank across layers, heads, and types of weight matrix, we again saw a correlation between only the effective ranks of corresponding key and query matrices. \textcolor{red}{add figures as well} This is again summarized in our correlation matrices.
+
+<br>
+<br> \textcolor{red}{add figures as well} 
+
+<br>
+When computing effective rank across layers, heads, and types of weight matrix, we again saw a correlation between only the effective ranks of corresponding key and query matrices. This information is again summarized in our correlation matrices:
+
 
 
 <figure>
@@ -415,9 +424,10 @@ When computing effective rank across layers, heads, and types of weight matrix, 
 
 <h2>Frobenius Norm</h2>
 
-The Frobenius norm is quite similar to the Euclidean norm for vectors—for a matrix \(A\), its defined as $\sqrt{\sum (A_{ij})^2}.$ Similar to the Euclidean norm for vectors, it can be thought of as a measurement for the size of a matrix.
-
-Again, we were able to find a correlation between the norms of the query and key matrices, but not involving the value matrix.  
+The Frobenius norm is quite similar to the Euclidean norm for vectors—for a matrix \(A\), its defined as \(\sqrt{\sum (A_{ij})^2}.\) Similar to the Euclidean norm for vectors, it can be thought of as a measurement for the size of a matrix.
+<br>
+<br>
+Again, we were able to find a correlation between the norms of the query and key matrices, but not involving the value matrix:
 
 <figure>
         <p style="text-align: center;">
@@ -445,9 +455,11 @@ Again, we were able to find a correlation between the norms of the query and key
     </figure>
     
 <h2>Condition number</h2>
-\begin{subsection}{Condition number}
 
 Our last metric was the condition number, which is the ratio of the magnitude of the largest singular value to the smallest singular value. When this is large, that indicates that a certain direction dominates in the mapping performed by the matrix, which indicates that the matrix is less stable, because a small perturbation in the input is more likely to result in a substantially different output.
+
+<br>
+<br>
 
 Again, we observe the same relationship between the query, key, and weight matrices, although the correlation for the condition number is weaker than the correlations of the other three metrics. 
 
@@ -477,7 +489,15 @@ Again, we observe the same relationship between the query, key, and weight matri
     </figure>
 
 	<h1>Experiments on ViTs</h1>
-    
+
+
+	In our analysis of BERT, we discovered strong, statistically significant correlation between \(W_Q\) and \(W_K\) among four metrics. This led us to believe that we could relate \(W_Q\) and \(W_K\) with some simple matrix multiplication. We first decided to experiment with the identity matrix, and tested the case when \(W_Q = W_K.\)
+
+	<br>
+	<br>
+
+	However, in order to give the model more parameters to work with, we also set \(W_K = W_H \odot W_Q,\) where \(W_H\) is a matrix with the same dimensions as \(W_Q\) and learnable parameters. 
+
 		</div>
 		    <div class="margin-right-block">
 		    </div>
