@@ -520,6 +520,23 @@ Again, we observe the same relationship between the query, key, and weight matri
 	<br>
 	One thing we notice is that these models tend to overfit, both for the original and adjusted weights. We see the difference in training and validation accuracy most clearly in CIFAR10. The model also overfits for both MNIST datasets, except it is not immediately visible because both accuracies are so high.
 
+	<h1>Analysis of ViT Performance</h1>
+
+	As previously noted, all of our ViT models overfit on all of our datasets. This is likely because the number of parameters exceeds what is necessary, as the examples we trained them on were not the most difficult. Although the difference is not incredibly substantial, it is interesting that the identity and Hadamard product alternative models achieve both a higher validation accuracy and lower training accuracy than the standard model on CIFAR, suggesting that they overfit less. 
+
+	<br><br>
+	Because ViT does not have the inductive bias of translation equivariance and generally has a lot of parameters, it makes sense that overfitting would occur. Although it may be counter-intuitive that more restrictive models perform better than more general models (for example, CNNs are more restrictive than transformers and generally preform worse), this phenomena has been observed in other circumstances as well. 
+	<br><br>
+	For example, Longformer\footnote{\url{https://arxiv.org/pdf/2004.05150}} is an alternative Transformer architecture that only involves a sliding attention window and a few tokens that have global attention (standard attention involves every token attending globally to all other tokens). This is also a restricted case of the standard Transformer, but they achieved better performance than RoBERTa. 
+	<br><br>
+	Going beyond Transformers, in knowledge distillation, a smaller model learns its weights from the results of a larger one. Despite having less parameters to tune, it generally achieves better accuracy than the baseline model.\footnote{\url{https://arxiv.org/pdf/1503.02531}}\footnote{\url{https://openaccess.thecvf.com/content_ICCV_2019/html/Cho_On_the_Efficacy_of_Knowledge_Distillation_ICCV_2019_paper.html}}
+	
+	<h1>Experiments on Finetuning BERT</h1>
+
+	We finetune BERT for sentiment analysis with the IMDb dataset once with standard weights and once with our identity-shared weights. Prior analysis of an open source BERT model finetuned for sentiment analysis revealed that attention heads only changed in the last 3 of 12 layers. Thus, for our identity-shared weights, we only enforce this for the last 3 layers. We use BERT-base-uncased as our pretrained model and use the following hyperparameters as suggested in the original BERT paper: learning rate \(5e^{-5}\) with Adam optimizer, batch size 16, and 3 epochs. Our identity-shared weights performed slightly worse on validation data compared to the standard weights.
+
+	<br><br>
+	add figure
 
 		</div>
 		    <div class="margin-right-block">
