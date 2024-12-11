@@ -241,16 +241,57 @@
 				</div>
 		    <div class="main-content-block">
 						<h1>Introduction</h1>
-            The Transformer model was introduced in 2017 \footnote{\url{https://arxiv.org/abs/1706.03762}}. Since then, it has achieved remarkable progress in a variety of tasks, including computer vision \footnote{\url{https://arxiv.org/pdf/2005.12872}} and natural language processing \footnote{\url{https://arxiv.org/pdf/1906.08237}}. 
-
-Due to how large many transformer models are, it is nontrivial to understand their behavior and determine how they could be modified. But, such work would be greatly beneficial to determine how to reduce the memory or computation needed for training, as well as increase interpretability. 
-
-One avenue along which this has been pursued is examining the representations that different models use. Huh et al. propose a platonic/ideal representation\footnote{\url{https://arxiv.org/pdf/2405.07987}}—the notion that there's a certain representation that is most effective at capturing data, and many models across modalities get close to this. Such a result led us to hypothesize that as the layer of a model increases, there is less variation in the weights of the attention matrices because it is approaching this ideal representation. In other words, in the later layers, we are more likely to be making smaller adjustments to the hidden state of a given embedding. 
-
-Another reason we were motivated in believing that there can be similarity between later adjacent layers is because of the success of Recurrent Neural Networks\footnote{\url{https://sophieeunajang.wordpress.com/wp-content/uploads/2020/10/lstm.pdf}}. Before the transformer architecture was introduced, tasks like translation (i.e. Google Translate) would use Long Short Term Memory. The recurrent inductive bias that RNNs have has been shown to be important on various natural language processing tasks\footnote{\url{https://arxiv.org/pdf/1807.03819}}, and thus, we hypothesized that models might discover this after training. 
-
-As we were examining how the query, key, and value matrices varied across layers of the model, we discovered that there is a strong, statistically significant correlation between the key weight and query weight matrices in the following four metrics: sparsity, rank, Froebenius norm, and condition number. This led us to experiment on two novel methods of weight sharing between query and key. The first method is sharing the exact weight matrix between query and key, relating the two with a simple identity matrix. The second method is relating $W_K$ by a Hadamard product with $W_Q$ and $W_K$, which preserves sparsity and ensures rank is non-increasing going from $W_Q$ to $W_K$. In both these methods, less parameters are learned, which saves memory and compute time, without sacrificing performance.
-
+			    
+            <p>The Transformer model was introduced in 2017 <a href="#fn1"
+class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.
+Since then, it has achieved remarkable progress in a variety of tasks,
+including computer vision <a href="#fn2" class="footnote-ref"
+id="fnref2" role="doc-noteref"><sup>2</sup></a> and natural language
+processing <a href="#fn3" class="footnote-ref" id="fnref3"
+role="doc-noteref"><sup>3</sup></a>.</p>
+<p>Due to how large many transformer models are, it is not trivial to
+understand their behavior and determine how they could be modified. But,
+such work would be greatly beneficial to determine how to reduce the
+memory or computation needed for training, as well as increase
+interpretability.</p>
+<p>One avenue along which this has been pursued is by examining the
+representations that different models use. Huh et al. propose a
+platonic/ideal representation<a href="#fn4" class="footnote-ref"
+id="fnref4" role="doc-noteref"><sup>4</sup></a>—the notion that there’s
+a certain representation that is most effective at capturing data, and
+many models get close to this. Such a result led us to hypothesize that
+as the layer of a model increases, because it is approaching this ideal
+representation, there is less variation in the weights of the attention
+matrices. In other words, in the later layers we are more likely to be
+making smaller adjustments to the hidden state of a given embedding.</p>
+<p>Another reason we were motivated in believing that there can be
+similarity between later adjacent layers is because of the success of
+Recurrent Neural Networks<a href="#fn5" class="footnote-ref" id="fnref5"
+role="doc-noteref"><sup>5</sup></a>. Before the transformer architecture
+was introduced, tasks like translation (i.e. Google Translate) would use
+Long Short Term Memory. The recurrent inductive bias that RNNs have has
+been shown to be important on various natural language processing
+tasks<a href="#fn6" class="footnote-ref" id="fnref6"
+role="doc-noteref"><sup>6</sup></a>, and thus, we hypothesized that
+models might discover this after training.</p>
+<p>As we were examining how the query, key, and value matrices varied
+across layers of the model, we discovered that there is a strong,
+statistically significant correlation between the key weight and query
+weight matrices in the following four metrics: sparsity, rank,
+froebenius norm, and condition number. This led us to experiment on two
+novel methods of weight sharing between query and key. The first method
+is sharing the exact weight matrix between query and key, relating the
+two with a simple identity matrix. The second method is relating <span
+class="math inline"><em>W</em><sub><em>K</em></sub></span> by a hadamark
+product with <span
+class="math inline"><em>W</em><sub><em>Q</em></sub></span> and <span
+class="math inline"><em>W</em><sub><em>K</em></sub></span>, which
+preserves sparsity and ensures rank is non-increasing going from <span
+class="math inline"><em>W</em><sub><em>Q</em></sub></span> to <span
+class="math inline"><em>W</em><sub><em>K</em></sub></span>. In both
+these methods, less parameters are learned, which saves memory and
+compute time, without sacrificing performance.</p>
+			    
 		    </div>
 		    <div class="margin-right-block">
 						Margin note that clarifies some detail #main-content-block for intro section.
